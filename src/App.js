@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import './styles/App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Login } from "./pages/login";
+import { Home } from "./components/home";
+import { Navigation } from './components/navigation';
+import { Logout } from './pages/logout';
+import HomePage from './pages/HomePage';
+import CSPByCategory from './pages/CSPByCategory';
+import CategoryByCSP from './pages/CategoryByCSP';
+import AverageBasket from './pages/AverageBasket';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/homepage" element={<HomePage />} />
+        <Route path="/csp-by-category" element={<CSPByCategory />} />
+        <Route path="/category-by-csp" element={<CategoryByCSP />} />
+        <Route path="/average-basket" element={<AverageBasket />} />
+        <Route path="/logout" element={<Logout />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
