@@ -18,6 +18,9 @@ const CategoryByCSP = () => {
   const [error, setError] = useState(null);
   const [totals, setTotals] = useState({});
   const [selectedRows, setSelectedRows] = useState(0);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [totalsCompare, setTotalsCompare] = useState(null);
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
