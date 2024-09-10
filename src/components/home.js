@@ -15,7 +15,7 @@ export const Home = () => {
             (async () => {
                 try {
                     const { data } = await axios.get(
-                        'http://localhost:8000/home/', {
+                        'https://gl-yrae-backend-24c518b70d2a.herokuapp.com/home/', {
                             headers: {
                                 'Content-Type': 'application/json'
                             }

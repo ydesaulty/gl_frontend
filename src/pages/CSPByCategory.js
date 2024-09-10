@@ -27,7 +27,7 @@ const CSPByCategory = () => {
     useEffect(() => {
         const checkAuthentication = async () => {
           try {
-            await axios.get('http://localhost:8000/home/');
+            await axios.get('https://gl-yrae-backend-24c518b70d2a.herokuapp.com/home/');
           } catch (error) {
             navigate('/login');
           }
@@ -41,7 +41,7 @@ const CSPByCategory = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:8000/combinedviewsets');
+                const response = await axios.get('https://gl-yrae-backend-24c518b70d2a.herokuapp.com/combinedviewsets');
                 setData(response.data);
                 setFilteredData(response.data);
                 setSelectedRows(response.data.length);

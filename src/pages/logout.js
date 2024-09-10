@@ -5,7 +5,7 @@ export const Logout = () => {
     useEffect(() => {
         (async () => {
             try {
-                const { data } = await axios.post('http://localhost:8000/token/refresh/', {
+                const { data } = await axios.post('https://gl-yrae-backend-24c518b70d2a.herokuapp.com/token/refresh/', {
                     refresh: localStorage.getItem('refresh_token')
                 }, {
                     headers: { 'Content-Type': 'application/json' },

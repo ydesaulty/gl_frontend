@@ -7,7 +7,7 @@ export const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    // Create the submit method.
+    // Méthode pour soumettre le formulaire
     const submit = async e => {
         e.preventDefault();
         const user = {
@@ -15,13 +15,13 @@ export const Login = () => {
             password: password
         };
 
-        // Create the POST request
-        const { data } = await axios.post('http://localhost:8000/token/', user, {
+        // Création de la requete POST pour récupération du token
+        const { data } = await axios.post('https://gl-yrae-backend-24c518b70d2a.herokuapp.com/token/', user, {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
         });
 
-        // Initialize the access & refresh token in localstorage.
+        // Initialisation des token d'acces & refresh (localstorage)
         localStorage.clear();
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
