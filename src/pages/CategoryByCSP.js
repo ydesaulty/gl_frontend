@@ -17,10 +17,7 @@ const CategoryByCSP = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totals, setTotals] = useState({});
-  const [totalsCompare, setTotalsCompare] = useState({});
   const [selectedRows, setSelectedRows] = useState(0);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
