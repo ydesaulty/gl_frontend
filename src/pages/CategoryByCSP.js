@@ -6,7 +6,7 @@ import FilterForm from '../components/FilterForm';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { exportToExcel } from '../components/exportToExcel';
 
-// Initialisation des états
+// Initialisation des variables
 const CategoryByCSP = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -17,15 +17,31 @@ const CategoryByCSP = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totals, setTotals] = useState({});
+  const [totalsCompare, setTotalsCompare] = useState({});
   const [selectedRows, setSelectedRows] = useState(0);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [totalsCompare, setTotalsCompare] = useState(null);
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
+  const cspOptions = [
+    { value: 'Employes', label: 'Employes' },
+    { value: 'Commercants', label: 'Commercants' },
+    { value: 'Etudiants', label: 'Etudiants' },
+    { value: 'Agriculteurs', label: 'Agriculteurs' },
+    { value: 'Retraites', label: 'Retraites' },
+    { value: 'Autres', label: 'Autres' },
+  ];
 
-  //Vérification de l'authentification
+  const categoryOptions = [
+    { value: 1, label: 'Catégorie 1' },
+    { value: 2, label: 'Catégorie 2' },
+    { value: 3, label: 'Catégorie 3' },
+    { value: 4, label: 'Catégorie 4' },
+    { value: 5, label: 'Catégorie 5' },
+  ];
+
+  // Vérification de l'authentification
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -37,6 +53,7 @@ const CategoryByCSP = () => {
 
     checkAuthentication();
   }, [navigate]);
+
   // Récupération des données depuis l'API
   useEffect(() => {
     const fetchData = async () => {
@@ -56,61 +73,16 @@ const CategoryByCSP = () => {
     fetchData();
   }, []);
 
-  // Gestion des filtres
-  const handleFilterChange = (filters) => {
-    const { csp, category, start_date, end_date, start_date_compare, end_date_compare } = filters;
-    let filtered = data;
-    let filteredCompare = data;
-
-    if (csp && csp.length > 0) {
-      filtered = filtered.filter(item => item.csp_lbl && csp.some(cspItem => cspItem.value === item.csp_lbl));
-      filteredCompare = filteredCompare.filter(item => item.csp_lbl && csp.some(cspItem => cspItem.value === item.csp_lbl));
-    }
-
-    if (category && category.length > 0) {
-      filtered = filtered.filter(item => item.cat_achat && category.some(catItem => catItem.value === item.cat_achat));
-      filteredCompare = filteredCompare.filter(item => item.cat_achat && category.some(catItem => catItem.value === item.cat_achat));
-    }
-
-    if (start_date) {
-      setStartDate(start_date);
-      filtered = filtered.filter(item => item.date_collecte && item.date_collecte >= start_date);
-    }
-
-    if (end_date) {
-      setEndDate(end_date);
-      filtered = filtered.filter(item => item.date_collecte && item.date_collecte <= end_date);
-    }
-
-    if (start_date_compare) {
-      setStartDateCompare(start_date_compare);
-      filteredCompare = filteredCompare.filter(item => item.date_collecte && item.date_collecte >= start_date_compare);
-    }
-
-    if (end_date_compare) {
-      setEndDateCompare(end_date_compare);
-      filteredCompare = filteredCompare.filter(item => item.date_collecte && item.date_collecte <= end_date_compare);
-    }
-
-    setFilteredData(filtered);
-    setFilteredDataCompare(filteredCompare);
-    aggregateData(filtered);
-    aggregateData(filteredCompare, true);
-    calculateTotals(filtered);
-    calculateTotals(filteredCompare, true);
-    setSelectedRows(filtered.length);
-  };
-
   // Agrégation des données par CSP et catégorie
   const aggregateData = (data, isCompare = false) => {
     const aggregated = data.reduce((acc, item) => {
       const csp = item.csp_lbl;
-      const category = item.cat_achat;
+      const category = parseInt(item.cat_achat);
       if (!acc[csp]) {
         acc[csp] = { csp_lbl: csp, montant_total: 0, qte_total: 0 };
-      }
-      if (!acc[csp][category]) {
-        acc[csp][category] = 0;
+        categoryOptions.forEach(cat => {
+          acc[csp][cat.value] = 0;
+        });
       }
       acc[csp][category] += parseFloat(item.montant_achat);
       acc[csp].montant_total += parseFloat(item.montant_achat);
@@ -118,17 +90,18 @@ const CategoryByCSP = () => {
       return acc;
     }, {});
 
+    const result = Object.values(aggregated);
     if (isCompare) {
-      setAggregatedDataCompare(Object.values(aggregated));
+      setAggregatedDataCompare(result);
     } else {
-      setAggregatedData(Object.values(aggregated));
+      setAggregatedData(result);
     }
   };
 
   // Calcul des totaux par catégorie d'achat
-  const calculateTotals = (data, isCompare = false) => {
-    const totals = data.reduce((acc, item) => {
-      const category = item.cat_achat;
+  const calculateTotals = (data) => {
+    return data.reduce((acc, item) => {
+      const category = parseInt(item.cat_achat);
       if (!acc[category]) {
         acc[category] = { montant_total: 0, qte_total: 0 };
       }
@@ -136,26 +109,65 @@ const CategoryByCSP = () => {
       acc[category].qte_total += parseInt(item.qte_article, 10);
       return acc;
     }, {});
+  };
 
-    if (isCompare) {
-      setTotalsCompare(totals);
-    } else {
-      setTotals(totals);
+  // Gestion des filtres
+  const handleFilterChange = (filters) => {
+    const { csp, category, start_date, end_date, start_date_compare, end_date_compare } = filters;
+    let filtered = data;
+    let filteredCompare = data;
+
+    if (csp && csp.length > 0) {
+      filtered = filtered.filter(item => csp.some(cspItem => cspItem.value === item.csp_lbl));
+      filteredCompare = filteredCompare.filter(item => csp.some(cspItem => cspItem.value === item.csp_lbl));
     }
+
+    if (category && category.length > 0) {
+      filtered = filtered.filter(item => category.some(catItem => catItem.value === parseInt(item.cat_achat)));
+      filteredCompare = filteredCompare.filter(item => category.some(catItem => catItem.value === parseInt(item.cat_achat)));
+    }
+
+    if (start_date) {
+      setStartDate(start_date);
+      filtered = filtered.filter(item => new Date(item.date_collecte) >= new Date(start_date));
+    }
+
+    if (end_date) {
+      setEndDate(end_date);
+      filtered = filtered.filter(item => new Date(item.date_collecte) <= new Date(end_date));
+    }
+
+    if (start_date_compare) {
+      setStartDateCompare(start_date_compare);
+      filteredCompare = filteredCompare.filter(item => new Date(item.date_collecte) >= new Date(start_date_compare));
+    }
+
+    if (end_date_compare) {
+      setEndDateCompare(end_date_compare);
+      filteredCompare = filteredCompare.filter(item => new Date(item.date_collecte) <= new Date(end_date_compare));
+    }
+
+    setFilteredData(filtered);
+    setFilteredDataCompare(filteredCompare);
+    aggregateData(filtered);
+    aggregateData(filteredCompare, true);
+    setTotals(calculateTotals(filtered));
+    setTotalsCompare(calculateTotals(filteredCompare));
+    setSelectedRows(filtered.length);
   };
 
   // Mise à jour automatique des données en fonction des filtres
   useEffect(() => {
     if (filteredData.length > 0) {
       aggregateData(filteredData);
-      calculateTotals(filteredData);
+      setTotals(calculateTotals(filteredData));
     }
   }, [filteredData]);
 
   useEffect(() => {
     if (filteredDataCompare.length > 0) {
       aggregateData(filteredDataCompare, true);
-      calculateTotals(filteredDataCompare, true);
+      setTotalsCompare(calculateTotals(filteredDataCompare));
     }
   }, [filteredDataCompare]);
 
@@ -171,20 +183,12 @@ const CategoryByCSP = () => {
     return <div>Aucune donnée disponible.</div>;
   }
 
-  const categoryOptions = [
-    { value: 1, label: 'Catégorie 1' },
-    { value: 2, label: 'Catégorie 2' },
-    { value: 3, label: 'Catégorie 3' },
-    { value: 4, label: 'Catégorie 4' },
-    { value: 5, label: 'Catégorie 5' },
-  ];
-
   // Affichage des graphiques, données et bouton d'export
   return (
     <div>
       <Navbar />
       <FilterForm onFilterChange={handleFilterChange} />
-      <h2>Montants d'achat par CSP</h2>
+      <h2>Montants d'achat par CSP (décomposition par Catégorie)</h2>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <BarChart
           width={800}
@@ -244,14 +248,26 @@ const CategoryByCSP = () => {
             <th>Catégorie d'achat</th>
             <th>Montant Total</th>
             <th>Quantité Totale</th>
+            {startDateCompare && endDateCompare && (
+              <>
+                <th>Montant Total (Comparaison)</th>
+                <th>Quantité Totale (Comparaison)</th>
+              </>
+            )}
           </tr>
         </thead>
         <tbody>
           {categoryOptions.map((category, index) => (
             <tr key={index}>
               <td>{category.label}</td>
-              <td>{totals[category.value]?.montant_total || 0}</td>
+              <td>{totals[category.value]?.montant_total.toFixed(2) || 0}</td>
               <td>{totals[category.value]?.qte_total || 0}</td>
+              {startDateCompare && endDateCompare && (
+                <>
+                  <td>{totalsCompare[category.value]?.montant_total.toFixed(2) || 0}</td>
+                  <td>{totalsCompare[category.value]?.qte_total || 0}</td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>

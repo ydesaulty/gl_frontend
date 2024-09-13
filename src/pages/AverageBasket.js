@@ -26,7 +26,7 @@ const AverageBasket = () => {
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
-  //Vérification de l'authentification
+  // Vérification de l'authentification
   useEffect(() => {
     const checkAuthentication = async () => {
       try {

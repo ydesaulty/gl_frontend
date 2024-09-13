@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 
+// Définition du composant de navigation
 export function Navigation() {
   const [isAuth, setIsAuth] = useState(false);
 
+  // Vérification de l'authentification
   useEffect(() => {
     if (localStorage.getItem('access_token') !== null) {
       setIsAuth(true);

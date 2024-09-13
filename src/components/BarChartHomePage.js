@@ -1,6 +1,8 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
+
+// Initialisation des graphiques
 Chart.register(...registerables);
 
 const BarChartHomePage = ({ data, stacked = false }) => {
@@ -40,6 +42,7 @@ const BarChartHomePage = ({ data, stacked = false }) => {
         borderWidth: 1,
       }];
 
+  // Affichage du graphique
   return (
     <Bar
       data={{

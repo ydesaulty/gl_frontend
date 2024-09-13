@@ -60,6 +60,7 @@ const HomePage = () => {
     filterDataByYear(data, year);
   }, [year, data]);
 
+  // Calcul des indicateurs mensuels de l'année filtrée
   const filterDataByYear = (data, year) => {
     const caByMonth = Array(12).fill(0);
     const caByCSP = Array(12).fill(null).map(() => ({

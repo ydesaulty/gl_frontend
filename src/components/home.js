@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// Define the Home function.
+// Définition de la page d'accueil
 export const Home = () => {
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
+    // Vérification de l'authentification
     useEffect(() => {
         if(localStorage.getItem('access_token') === null){
             navigate('/login');
@@ -22,7 +23,7 @@ export const Home = () => {
                         }
                     );
                     setMessage(data.message);
-                    navigate('/homepage'); // Redirect to HomePage.js
+                    navigate('/homepage'); // Redirection vers la page d'accueil
                 } catch (e) {
                     console.log('not auth');
                 }

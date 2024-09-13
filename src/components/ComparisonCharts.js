@@ -2,14 +2,17 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
+// Initialisation des graphiques
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ComparisonCharts = ({ data, csp, catAchat, period }) => {
+  // Vérification de la présence de données
   if (!data || data.length === 0) {
     return <div>Aucune donnée disponible.</div>;
   }
 
   const createChartData = (data, csp, catAchat, period) => {
+    // Calcul des montants par catégorie
     const montantParCat = data.reduce((acc, item) => {
       const cat = item.cat_achat;
       const montant = parseFloat(item.montant_achat);
@@ -17,9 +20,11 @@ const ComparisonCharts = ({ data, csp, catAchat, period }) => {
       return acc;
     }, {});
 
+    // Extraction des catégories et montants
     const categories = Object.keys(montantParCat);
     const montants = Object.values(montantParCat);
 
+    // Format des données pour le graphique
     return {
       labels: categories,
       datasets: [
@@ -32,6 +37,7 @@ const ComparisonCharts = ({ data, csp, catAchat, period }) => {
     };
   };
 
+  // Gestion des données pour le graphique
   const chartData = createChartData(data, csp, catAchat, period);
   const options = {
     responsive: true,
@@ -41,11 +47,12 @@ const ComparisonCharts = ({ data, csp, catAchat, period }) => {
       },
       title: {
         display: true,
-        text: 'Montant Total d\'Achat par Catégorie',
+        text: 'Montant Total d\'Achat par Catégorie23',
       },
     },
   };
 
+  // Affichage du graphique
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
       <div style={{ width: '400px', margin: '20px' }}>
