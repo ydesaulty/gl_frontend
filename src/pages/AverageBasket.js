@@ -143,7 +143,7 @@ const AverageBasket = () => {
   // Calcul des paniers moyens par mois
   const calculateMonthlyData = (data, isCompare = false) => {
     const monthly = data.reduce((acc, item) => {
-      const month = new Date(item.date_collecte).getMonth();
+      const month = new Date(item.date_collecte).getMonth() + 1;
       if (!acc[month]) {
         acc[month] = { month, montant_total: 0, qte_total: 0 };
       }
@@ -292,7 +292,7 @@ const AverageBasket = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="averageBasket" fill="#8884d8" name="Panier moyen" />
+          <Bar dataKey="averageBasket" fill="#82ca9d" name="Panier moyen" />
         </BarChart>
         {startDateCompare && endDateCompare && (
           <BarChart
@@ -306,7 +306,7 @@ const AverageBasket = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="averageBasket" fill="#8884d8" name="Panier moyen" />
+            <Bar dataKey="averageBasket" fill="#82ca9d" name="Panier moyen" />
           </BarChart>
         )}
       </div>
@@ -323,7 +323,7 @@ const AverageBasket = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="averageBasket" fill="#8884d8" name="Panier moyen" />
+          <Bar dataKey="averageBasket" fill="#82ca9d" name="Panier moyen" />
         </BarChart>
         {startDateCompare && endDateCompare && (
           <BarChart
@@ -337,7 +337,7 @@ const AverageBasket = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="averageBasket" fill="#8884d8" name="Panier moyen" />
+            <Bar dataKey="averageBasket" fill="#82ca9d" name="Panier moyen" />
           </BarChart>
         )}
       </div>

@@ -212,7 +212,7 @@ const CategoryByCSP = () => {
               yAxisId="left"
             />
           ))}
-          <Bar dataKey="qte_total" stackId="b" fill="#ffc658" name="Quantité Totale" yAxisId="right" />
+          <Bar dataKey="qte_total" stackId="b" fill="#82ca9d" name="Quantité Totale" yAxisId="right" />
         </BarChart>
         {startDateCompare && endDateCompare && (
           <BarChart
@@ -237,7 +237,7 @@ const CategoryByCSP = () => {
                 yAxisId="left"
               />
             ))}
-            <Bar dataKey="qte_total" stackId="b" fill="#ffc658" name="Quantité Totale" yAxisId="right" />
+            <Bar dataKey="qte_total" stackId="b" fill="#82ca9d" name="Quantité Totale" yAxisId="right" />
           </BarChart>
         )}
       </div>
