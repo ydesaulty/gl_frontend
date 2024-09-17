@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Composant CategoryByCSP pour l'analyse et la visualisation des catégories d'achat par CSP.
+ * @requires react
+ * @requires react-router-dom
+ * @requires axios
+ * @requires recharts
+ * @requires ../components/Navbar
+ * @requires ../components/FilterForm
+ * @requires ../components/exportToExcel
+ */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,7 +16,12 @@ import FilterForm from '../components/FilterForm';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { exportToExcel } from '../components/exportToExcel';
 
-// Initialisation des variables
+/**
+ * Composant CategoryByCSP pour l'analyse des catégories d'achat par CSP.
+ * 
+ * @component
+ * @returns {React.Element} Elément React contenant les graphiques pour l'analyse des catégories par CSP.
+ */
 const CategoryByCSP = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -24,6 +39,10 @@ const CategoryByCSP = () => {
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
+  /**
+   * Options de graphique pour le filtrage des CSP.
+   * @type {Array<{value: string, label: string}>}
+   */
   const cspOptions = [
     { value: 'Employes', label: 'Employes' },
     { value: 'Commercants', label: 'Commercants' },
@@ -33,6 +52,10 @@ const CategoryByCSP = () => {
     { value: 'Autres', label: 'Autres' },
   ];
 
+  /**
+   * Options de graphique pour le filtrage des catégories d'achat.
+   * @type {Array<{value: number, label: string}>}
+   */
   const categoryOptions = [
     { value: 1, label: 'Catégorie 1' },
     { value: 2, label: 'Catégorie 2' },
@@ -41,7 +64,9 @@ const CategoryByCSP = () => {
     { value: 5, label: 'Catégorie 5' },
   ];
 
-  // Vérification de l'authentification
+  /**
+   * Vérification de l'authentification.
+   */
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -54,7 +79,9 @@ const CategoryByCSP = () => {
     checkAuthentication();
   }, [navigate]);
 
-  // Récupération des données depuis l'API
+  /**
+   * Récupération des données depuis l'API.
+   */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -73,7 +100,12 @@ const CategoryByCSP = () => {
     fetchData();
   }, []);
 
-  // Agrégation des données par CSP et catégorie
+  /**
+   * Agrégation des données par CSP et catégorie.
+   * 
+   * @param {Array} data - Les données à agréger.
+   * @param {boolean} isCompare - Indique s'il s'agit des données de comparaison.
+   */
   const aggregateData = (data, isCompare = false) => {
     const aggregated = data.reduce((acc, item) => {
       const csp = item.csp_lbl;
@@ -98,7 +130,12 @@ const CategoryByCSP = () => {
     }
   };
 
-  // Calcul des totaux par catégorie d'achat
+  /**
+   * Calcul des totaux par catégorie d'achat.
+   * 
+   * @param {Array} data - Les données à traiter.
+   * @returns {Object} Un objet contenant les totaux par catégorie.
+   */
   const calculateTotals = (data) => {
     return data.reduce((acc, item) => {
       const category = parseInt(item.cat_achat);
@@ -111,7 +148,11 @@ const CategoryByCSP = () => {
     }, {});
   };
 
-  // Gestion des filtres
+  /**
+   * Gestion des filtres et mise à jour des données.
+   * 
+   * @param {Object} filters - Filtres appliqués par l'utilisateur.
+   */
   const handleFilterChange = (filters) => {
     const { csp, category, start_date, end_date, start_date_compare, end_date_compare } = filters;
     let filtered = data;
@@ -156,7 +197,9 @@ const CategoryByCSP = () => {
     setSelectedRows(filtered.length);
   };
 
-  // Mise à jour automatique des données en fonction des filtres
+  /**
+   * Mise à jour automatique des données agrégéesen fonction des filtres.
+   */
   useEffect(() => {
     if (filteredData.length > 0) {
       aggregateData(filteredData);
@@ -164,6 +207,9 @@ const CategoryByCSP = () => {
     }
   }, [filteredData]);
 
+  /**
+   * Affichage et mise à jour les données de comparaison agrégées si renseignement des données filtrées de comparaison.
+   */
   useEffect(() => {
     if (filteredDataCompare.length > 0) {
       aggregateData(filteredDataCompare, true);

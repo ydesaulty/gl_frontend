@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Composant CSPByCategory pour l'analyse et la visualisation des CSP par catégorie d'achat.
+ * @requires react
+ * @requires react-router-dom
+ * @requires axios
+ * @requires recharts
+ * @requires ../components/Navbar
+ * @requires ../components/FilterForm
+ * @requires ../components/exportToExcel
+ */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,7 +16,12 @@ import Navbar from '../components/Navbar';
 import FilterForm from '../components/FilterForm';
 import { exportToExcel } from '../components/exportToExcel';
 
-// Initialisation des variables
+/**
+ * Composant CSPByCategory pour l'analyse des CSP par catégorie d'achat.
+ * 
+ * @component
+ * @returns {React.Element} Un élément React contenant les graphiques et les contrôles pour l'analyse des CSP par catégorie.
+ */
 const CSPByCategory = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -22,6 +37,10 @@ const CSPByCategory = () => {
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
+  /**
+   * Options de graphique pour le filtrage des CSP.
+   * @type {Array<{value: string, label: string}>}
+   */
   const cspOptions = [
     { value: 'Employes', label: 'Employes' },
     { value: 'Commercants', label: 'Commercants' },
@@ -31,6 +50,10 @@ const CSPByCategory = () => {
     { value: 'Autres', label: 'Autres' },
   ];
 
+  /**
+   * Options de graphique pour le filtrage des catégories d'achat .
+   * @type {Array<{value: number, label: string}>}
+   */
   const categoryOptions = [
     { value: 1, label: 'Catégorie 1' },
     { value: 2, label: 'Catégorie 2' },
@@ -38,8 +61,10 @@ const CSPByCategory = () => {
     { value: 4, label: 'Catégorie 4' },
     { value: 5, label: 'Catégorie 5' },
   ];
-
-  // Vérification de l'authentification
+  
+  /**
+   * Vérification de l'authentification.
+   */
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -52,7 +77,9 @@ const CSPByCategory = () => {
     checkAuthentication();
   }, [navigate]);
 
-  // Récupération des données depuis l'API
+  /**
+   * Récupération des données depuis l'API.
+   */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -73,7 +100,12 @@ const CSPByCategory = () => {
     fetchData();
   }, []);
 
-  // Agrégation des données par catégorie et CSP
+  /**
+   * Agrégation des données par catégorie et CSP.
+   * 
+   * @param {Array} data - Les données à agréger.
+   * @returns {Array} Un tableau d'objets représentant les données agrégées.
+   */
   const aggregateData = (data) => {
     const aggregated = categoryOptions.map(category => {
       const categoryData = {
@@ -101,7 +133,11 @@ const CSPByCategory = () => {
     return aggregated;
   };
 
-  // Gestion des filtres
+  /**
+   * Gestion des filtres et mise à jour des données.
+   * 
+   * @param {Object} filters - Les filtres appliqués par l'utilisateur.
+   */
   const handleFilterChange = (filters) => {
     const { csp, category, start_date, end_date, start_date_compare, end_date_compare } = filters;
     let filtered = data;
@@ -148,6 +184,12 @@ const CSPByCategory = () => {
     setSelectedRows(filtered.length);
   };
 
+  /**
+   * Calcul des totaux par CSP.
+   * 
+   * @param {Array} data - Données agrégées.
+   * @returns {Object} Objet contenant les totaux par CSP.
+   */
   const calculateTotalsByCSP = (data) => {
     return cspOptions.reduce((acc, csp) => {
       acc[csp.value] = {

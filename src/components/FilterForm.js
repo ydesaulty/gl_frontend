@@ -1,14 +1,30 @@
+/**
+ * @fileoverview Composant FilterForm pour le filtrage des données.
+ * @requires react
+ * @requires react-hook-form
+ * @requires react-select
+ */
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 
-// Définition du formulaire pour le filtrage
+/**
+ * Définition du formulaire pour le filtrage.
+ *
+ * @component
+ * @param {Object} props - Les propriétés du composant.
+ * @param {function} props.onFilterChange - Fonction appelée lors de la soumission du formulaire avec les nouvelles valeurs de filtre.
+ * @returns {React.Element} Un élément React contenant le formulaire de filtrage.
+ */
 const FilterForm = ({ onFilterChange }) => {
 
 // Initialisation du formulaire (react-hook-form)
 const { handleSubmit, control } = useForm();
 
-// Options pour la sélection des CSP
+/**
+   * Options pour la sélection des CSP.
+   * @type {Array<{value: string, label: string}>}
+   */
 const cspOptions = [
     { value: 'Employes', label: 'Employes' },
     { value: 'Commercants', label: 'Commercants' },
@@ -18,7 +34,10 @@ const cspOptions = [
     { value: 'Autres', label: 'Autres' },
 ];
 
-// Options pour la sélection des catégories
+/**
+   * Options pour la sélection des catégories.
+   * @type {Array<{value: number, label: string}>}
+   */
 const categoryOptions = [
     { value: 1, label: 'Catégorie 1' },
     { value: 2, label: 'Catégorie 2' },
@@ -27,7 +46,10 @@ const categoryOptions = [
     { value: 5, label: 'Catégorie 5' },
 ];
 
-// Gestion d'envoi des filtres
+/**
+   * Gestion d'envoi des filtres.
+   * @param {Object} data - Les données du formulaire.
+   */
 const onSubmit = (data) => {
     onFilterChange(data);
 };

@@ -1,15 +1,40 @@
+/**
+ * @fileoverview Page d'accueil avec vérification d'authentification.
+ * @requires react
+ * @requires axios
+ * @requires react-router-dom
+ */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-// Définition de la page d'accueil
+/**
+ * Définition de la page d'accueil et gestion de l'authentification.
+ *
+ * @component
+ * @returns {React.Element} Un élément React contenant le message de bienvenue ou redirigeant vers la page de connexion.
+ */
 export const Home = () => {
+   
+    /**
+   * État pour stocker le message de bienvenue.
+   * @type {[string, function]} Tuple contenant le message et la fonction pour la mise à jour.
+   */
     const [message, setMessage] = useState('');
+
+    /**
+   * Hook de navigation pour la redirection.
+   * @type {function} Fonction de navigation de react-router-dom.
+   */
     const navigate = useNavigate();
 
-    // Vérification de l'authentification
+    /**
+   * Effet pour vérifier l'authentification et charger les données de l'utilisateur.
+   */
     useEffect(() => {
         if(localStorage.getItem('access_token') === null){
+            
+            // Redirection vers la page de connexion si aucun token n'est présent
             navigate('/login');
         }
         else{

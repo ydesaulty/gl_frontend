@@ -1,13 +1,44 @@
+/**
+ * @fileoverview Composant Login pour la gestion de l'authentification.
+ * @requires axios
+ * @requires react
+ * @requires react-router-dom
+ */
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Composant Login pour l'affichage du formulaire de connection et la gestion de l'authentification.
+ * 
+ * @component
+ * @returns {React.Element} Elément React contenant le formulaire de connection.
+ */
 export const Login = () => {
+    /**
+   * Stockage du nom d'utilisateur.
+   * @type {[string, function]} Tuple contenant le nom d'utilisateur et la fonction de mise à jour.
+   */
     const [username, setUsername] = useState('');
+    /**
+   * Stockage du mot de passe.
+   * @type {[string, function]} Tuple contenant le mot de passe et la fonction de mise à jour.
+   */
     const [password, setPassword] = useState('');
+    /**
+   * Hook de navigation pour la redirection après connection.
+   * @type {function} Fonction de navigation de react-router-dom.
+   */
     const navigate = useNavigate();
 
-    // Méthode pour soumettre le formulaire
+    /**
+   * Gestion du formulaire de connection.
+   * Envoi de la requête POST pour obtenir les tokens d'authentification,
+   * puis stockage des tokens dans le localStorage avant redirection vers la page d'accueil.
+   * 
+   * @async
+   * @param {Event} e - Soumission du formulaire.
+   */
     const submit = async e => {
         e.preventDefault();
         const user = {
@@ -25,6 +56,8 @@ export const Login = () => {
         localStorage.clear();
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
+        
+        // Configuration du header d'autorisation par défaut pour les futures requêtes
         axios.defaults.headers.common['Authorization'] = `Bearer ${data['access']}`;
         navigate('/homepage');
     }

@@ -1,10 +1,23 @@
+/**
+ * @fileoverview Composant HomePage pour l'affichage des graphiques de synthèse des ventes.
+ * @requires react
+ * @requires react-router-dom
+ * @requires axios
+ * @requires recharts
+ * @requires ../components/Navbar
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
-// Initialisation des états
+/**
+ * Composant HomePage pour l'affichage des graphiques de synthèse des ventes.
+ * 
+ * @component
+ * @returns {React.Element} Un élément React contenant les graphiques d'analyse des ventes.
+ */
 const HomePage = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -16,6 +29,10 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /**
+   * Options de graphique pour le filtrage des CSP.
+   * @type {Array<{value: string, label: string}>}
+   */
   const cspOptions = [
     { value: 'Employes', label: 'Employes' },
     { value: 'Commercants', label: 'Commercants' },
@@ -25,7 +42,9 @@ const HomePage = () => {
     { value: 'Autres', label: 'Autres' },
   ];
 
-//Vérification de l'authentification
+  /**
+   * Vérification de l'authentification.
+   */
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -38,7 +57,9 @@ const HomePage = () => {
     checkAuthentication();
   }, [navigate]);
 
-// Récupération des données depuis l'API
+  /**
+   * Récupération des données depuis l'API.
+   */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -56,11 +77,19 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+  /**
+   * Effet pour filtrer les données lorsque l'année change.
+   */
   useEffect(() => {
     filterDataByYear(data, year);
   }, [year, data]);
 
-  // Calcul des indicateurs mensuels de l'année filtrée
+  /**
+   * Calcul des indicateurs agrégés mensuels de l'année filtrée.
+   * 
+   * @param {Array} data - Les données brutes.
+   * @param {number} year - L'année à filtrer.
+   */
   const filterDataByYear = (data, year) => {
     const caByMonth = Array(12).fill(0);
     const caByCSP = Array(12).fill(null).map(() => ({
@@ -129,7 +158,11 @@ const HomePage = () => {
     setMonthlyAverageBasket(averageBasket.map((basket, index) => ({ month: index + 1, average: basket.average })));
   };
 
-  // Gestion du changement d'année
+  /**
+   * Gestion du changement d'année sélectionnée.
+   * 
+   * @param {Event} event - L'événement de changement.
+   */
   const handleYearChange = (event) => {
     setYear(parseInt(event.target.value));
   };
@@ -192,7 +225,7 @@ const HomePage = () => {
               yAxisId="left"
             />
           ))}
-          <Bar dataKey="qte_total" stackId="b" fill="#ffc658" name="Quantité Totale" yAxisId="right" />
+          <Bar dataKey="qte_total" stackId="b" fill="#82ca9d" name="Quantité Totale" yAxisId="right" />
         </BarChart>
       </div>
 
@@ -215,7 +248,7 @@ const HomePage = () => {
           <Bar dataKey="Cat 3" stackId="a" fill="#ffc658" name="Cat 3" yAxisId="left" />
           <Bar dataKey="Cat 4" stackId="a" fill="#ff8042" name="Cat 4" yAxisId="left" />
           <Bar dataKey="Cat 5" stackId="a" fill="#808080" name="Cat 5" yAxisId="left" />
-          <Bar dataKey="qte_total" stackId="b" fill="#ffc658" name="Quantité Totale" yAxisId="right" />
+          <Bar dataKey="qte_total" stackId="b" fill="#82ca9d" name="Quantité Totale" yAxisId="right" />
         </BarChart>
       </div>
 

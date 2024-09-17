@@ -1,7 +1,17 @@
+/**
+ * @fileoverview Composant Navbar pour la navigation principale de l'application.
+ * @requires react
+ * @requires react-router-dom
+ * @requires styled-components
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+/**
+ * Conteneur stylisé pour la barre de navigation.
+ * @component
+ */
 const NavbarContainer = styled.nav`
   display: flex;
   justify-content: space-around;
@@ -9,6 +19,10 @@ const NavbarContainer = styled.nav`
   padding: 10px;
 `;
 
+/**
+ * Bouton stylisé de navigation.
+ * @component
+ */
 const NavButton = styled(Link)`
   padding: 10px 20px;
   margin: 5px;
@@ -24,6 +38,12 @@ const NavButton = styled(Link)`
   }
 `;
 
+/**
+ * Composant Navbar pour afficher la barre de navigation principale.
+ *
+ * @component
+ * @returns {React.Element} Un élément React contenant la barre de navigation avec des liens vers différentes pages.
+ */
 const Navbar = () => {
   return (
     <NavbarContainer>

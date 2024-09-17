@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Composant BarChart pour afficher des données sous forme de barchart.
+ * @requires react
+ * @requires react-chartjs-2
+ * @requires chart.js
+ */
+
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -12,7 +19,10 @@ const BarChart = ({ data, csp, catAchat, period }) => {
     return <div>Aucune donnée disponible.</div>;
   }
 
-  // Agréger les données par catégorie d'achat
+   /**
+   * Agreger les données par catégorie d'achat.
+   * @type {Object}
+   */
   const montantParCat = data.reduce((acc, item) => {
     const cat = item.cat_achat;
     const montant = parseFloat(item.montant_achat);
@@ -24,7 +34,10 @@ const BarChart = ({ data, csp, catAchat, period }) => {
   const categories = Object.keys(montantParCat);
   const montants = Object.values(montantParCat);
 
-  // Formatage des données pour le graphique
+    /**
+   * Formatage des Données pour le graphique.
+   * @type {Object}
+   */
   const chartData = {
     labels: categories,
     datasets: [
@@ -36,7 +49,10 @@ const BarChart = ({ data, csp, catAchat, period }) => {
     ],
   };
 
-  // Options du graphique
+  /**
+   * Options du graphique.
+   * @type {Object}
+   */
   const options = {
     responsive: true,
     plugins: {

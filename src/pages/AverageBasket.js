@@ -1,3 +1,13 @@
+/**
+ * @fileoverview Composant AverageBasket pour l'analyse des paniers moyens.
+ * @requires react
+ * @requires react-router-dom
+ * @requires axios
+ * @requires recharts
+ * @requires ../components/Navbar
+ * @requires ../components/FilterForm
+ * @requires ../components/exportToExcel
+ */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,7 +16,12 @@ import FilterForm from '../components/FilterForm';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { exportToExcel } from '../components/exportToExcel';
 
-// Initialisation des états
+/**
+ * Composant AverageBasket pour l'analyse des paniers moyens.
+ * 
+ * @component
+ * @returns {React.Element} Elément React contenant les graphiques et les contrôles pour l'analyse des paniers moyens.
+ */
 const AverageBasket = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
@@ -26,7 +41,9 @@ const AverageBasket = () => {
   const [startDateCompare, setStartDateCompare] = useState('');
   const [endDateCompare, setEndDateCompare] = useState('');
 
-  // Vérification de l'authentification
+  /**
+   * Vérification de l'authentification.
+   */
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
@@ -39,8 +56,10 @@ const AverageBasket = () => {
     checkAuthentication();
   }, [navigate]);
 
-
-  // Récupération des données depuis l'API
+  
+  /**
+   * Récupération des données depuis l'API.
+   */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -59,7 +78,11 @@ const AverageBasket = () => {
     fetchData();
   }, []);
 
-  // Gestion des filtres
+  /**
+   * Gestion des filtres et mise à jour des données.
+   * 
+   * @param {Object} filters - Filtres définis par l'utilisateur.
+   */
   const handleFilterChange = (filters) => {
     const { csp, category, start_date, end_date, start_date_compare, end_date_compare } = filters;
     let filtered = data;
@@ -106,7 +129,12 @@ const AverageBasket = () => {
     setSelectedRows(filtered.length);
   };
 
-  // Agrégation des données par CSP et catégorie
+  /**
+   * Agrégation des données par CSP et catégorie.
+   * 
+   * @param {Array} data - Les données à agréger.
+   * @param {boolean} isCompare - Indique s'il s'agit des données de comparaison.
+   */
   const aggregateData = (data, isCompare = false) => {
     const aggregated = data.reduce((acc, item) => {
       const csp = item.csp_lbl;
@@ -139,8 +167,13 @@ const AverageBasket = () => {
       setAggregatedData(aggregatedWithAverage);
     }
   };
-
-  // Calcul des paniers moyens par mois
+  
+  /**
+   * Calcul des paniers moyens par mois.
+   * 
+   * @param {Array} data - Les données à traiter.
+   * @param {boolean} isCompare - Indique s'il s'agit des données de comparaison.
+   */
   const calculateMonthlyData = (data, isCompare = false) => {
     const monthly = data.reduce((acc, item) => {
       const month = new Date(item.date_collecte).getMonth() + 1;
@@ -165,7 +198,12 @@ const AverageBasket = () => {
     }
   };
 
-  // Calcul des paniers moyens par CSP
+  /**
+   * Calcul des paniers moyens par CSP.
+   * 
+   * @param {Array} data - Les données à traiter.
+   * @param {boolean} isCompare - Indique s'il s'agit des données de comparaison.
+   */
   const calculateTotalAverageData = (data, isCompare = false) => {
     const totalAverage = data.reduce((acc, item) => {
       const csp = item.csp_lbl;
@@ -190,7 +228,9 @@ const AverageBasket = () => {
     }
   };
 
-  // Mise à jour automatique des données en fonction des filtres
+  /**
+   * Mise à jour automatique des données agrégées en fonction des filtres.
+   */
   useEffect(() => {
     if (filteredData.length > 0) {
       aggregateData(filteredData);
@@ -219,6 +259,10 @@ const AverageBasket = () => {
     return <div>Aucune donnée disponible.</div>;
   }
 
+  /**
+   * Options de graphique pour le filtrage des catégories d'achat.
+   * @type {Array<{value: number, label: string}>}
+   */
   const categoryOptions = [
     { value: 1, label: 'Catégorie 1' },
     { value: 2, label: 'Catégorie 2' },
