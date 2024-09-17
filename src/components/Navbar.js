@@ -51,6 +51,7 @@ const Navbar = () => {
       <NavButton to="/csp-by-category">CSP par Catégorie</NavButton>
       <NavButton to="/category-by-csp">Catégories d'achat par CSP</NavButton>
       <NavButton to="/average-basket">Panier Moyen</NavButton>
+      <NavButton to="/average-basket">Documentation</NavButton>
     </NavbarContainer>
   );
 };
