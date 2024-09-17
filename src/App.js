@@ -22,7 +22,7 @@ function App() {
         <Route path="/category-by-csp" element={<CategoryByCSP />} />
         <Route path="/average-basket" element={<AverageBasket />} />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/documentation" component={Documentation} />
+        <Route path="/documentation" element={<Documentation />} />
       </Routes>
     </BrowserRouter>
   );
