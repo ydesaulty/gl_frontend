@@ -17,14 +17,15 @@ import { useNavigate } from "react-router-dom";
 export const Home = () => {
    
     /**
-   * État pour stocker le message de bienvenue.
-   * @type {[string, function]} Tuple contenant le message et la fonction pour la mise à jour.
+   * Stockage du Tuple contenant le message et la fonction pour la mise à jour.
+   * @type {Array<string|function>}
    */
     const [message, setMessage] = useState('');
 
     /**
    * Hook de navigation pour la redirection.
-   * @type {function} Fonction de navigation de react-router-dom.
+   * Fonction de navigation de react-router-dom.
+   * @type {function}
    */
     const navigate = useNavigate();
 

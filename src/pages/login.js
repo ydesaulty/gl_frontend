@@ -9,36 +9,36 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
- * Composant Login pour l'affichage du formulaire de connection et la gestion de l'authentification.
- * 
- * @component
- * @returns {React.Element} Elément React contenant le formulaire de connection.
- */
+* Composant Login pour l'affichage du formulaire de connection et la gestion de l'authentification.
+* 
+* @component
+* @returns {React.Element} Elément React contenant le formulaire de connection.
+*/
 export const Login = () => {
     /**
-   * Stockage du nom d'utilisateur.
-   * @type {[string, function]} Tuple contenant le nom d'utilisateur et la fonction de mise à jour.
-   */
+    * Stockage du Tuple contenant le nom d'utilisateur et la fonction de mise à jour.
+    * @type {Array<string|function>}
+    */
     const [username, setUsername] = useState('');
     /**
-   * Stockage du mot de passe.
-   * @type {[string, function]} Tuple contenant le mot de passe et la fonction de mise à jour.
-   */
+    * Stockage (Tuple) contenant le mot de passe et la fonction de mise à jour.
+    * @type {Array<string|function>}
+    */
     const [password, setPassword] = useState('');
     /**
-   * Hook de navigation pour la redirection après connection.
-   * @type {function} Fonction de navigation de react-router-dom.
-   */
+    * Hook de navigation (react-router-dom) pour la redirection après connection.
+    * @type {function}
+    */
     const navigate = useNavigate();
 
     /**
-   * Gestion du formulaire de connection.
-   * Envoi de la requête POST pour obtenir les tokens d'authentification,
-   * puis stockage des tokens dans le localStorage avant redirection vers la page d'accueil.
-   * 
-   * @async
-   * @param {Event} e - Soumission du formulaire.
-   */
+    * Gestion du formulaire de connection.
+    * Envoi de la requête POST pour obtenir les tokens d'authentification,
+    * puis stockage des tokens dans le localStorage avant redirection vers la page d'accueil.
+    * 
+    * @async
+    * @param {Event} e - Soumission du formulaire.
+    */
     const submit = async e => {
         e.preventDefault();
         const user = {

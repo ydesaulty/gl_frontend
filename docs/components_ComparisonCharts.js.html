@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ComparisonCharts.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ComparisonCharts.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Composant ComparisonCharts pour afficher un 2e Barchart des montants d'achat par catégorie pour comparaison.
+ * @requires react
+ * @requires react-chartjs-2
+ * @requires chart.js
+ */
+import React from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Initialisation des graphiques
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+/**
+ * Composant ComparisonCharts pour afficher un Barchart comparatif.
+ *
+ * @component
+ * @param {Object} props - Propriétés du composant.
+ * @param {Array} props.data - Données d'achat à afficher dans le graphique.
+ * @param {string} props.csp - CSP.
+ * @param {string} props.catAchat - Catégorie d'achats.
+ * @param {string} props.period - Périodes concernées.
+ * @returns {React.Element} Elément React renvoyant soit le Barchart comparatif soit un message d'erreur.
+ */
+const ComparisonCharts = ({ data, csp, catAchat, period }) => {
+  // Vérification de la présence de données
+  if (!data || data.length === 0) {
+    return &lt;div>Aucune donnée disponible.&lt;/div>;
+  }
+
+  /**
+   * Crée les données formatées pour le graphique à partir des données brutes.
+   *
+   * @function
+   * @param {Array} data - Les données d'achat brutes.
+   * @param {string} csp - La catégorie socio-professionnelle.
+   * @param {string} catAchat - La catégorie d'achat.
+   * @param {string} period - La période concernée.
+   * @returns {Object} Les données formatées pour le graphique.
+   */
+  const createChartData = (data, csp, catAchat, period) => {
+    // Calcul des montants par catégorie
+    const montantParCat = data.reduce((acc, item) => {
+      const cat = item.cat_achat;
+      const montant = parseFloat(item.montant_achat);
+      acc[cat] = (acc[cat] || 0) + montant;
+      return acc;
+    }, {});
+
+    // Extraction des catégories et montants
+    const categories = Object.keys(montantParCat);
+    const montants = Object.values(montantParCat);
+
+    // Format des données pour le graphique
+    return {
+      labels: categories,
+      datasets: [
+        {
+          label: `Montant total d'achat (CSP: ${csp}, Catégorie: ${catAchat}, Période: ${period})`,
+          data: montants,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        },
+      ],
+    };
+  };
+
+  // Gestion des données pour le graphique
+  const chartData = createChartData(data, csp, catAchat, period);
+  /**
+   * Options du graphique.
+   * @type {Object}
+   */
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Montant Total d\'Achat par Catégorie23',
+      },
+    },
+  };
+
+  // Affichage du graphique
+  return (
+    &lt;div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+      &lt;div style={{ width: '400px', margin: '20px' }}>
+        &lt;Bar data={chartData} options={options} />
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default ComparisonCharts;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AverageBasket">AverageBasket</a></li><li><a href="global.html#BarChartHomePage">BarChartHomePage</a></li><li><a href="global.html#CSPByCategory">CSPByCategory</a></li><li><a href="global.html#CategoryByCSP">CategoryByCSP</a></li><li><a href="global.html#Chart">Chart</a></li><li><a href="global.html#ComparisonCharts">ComparisonCharts</a></li><li><a href="global.html#FilterForm">FilterForm</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#NavButton">NavButton</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#NavbarContainer">NavbarContainer</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#exportToExcel">exportToExcel</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Tue Sep 17 2024 13:00:09 GMT+0200 (heure d’été d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

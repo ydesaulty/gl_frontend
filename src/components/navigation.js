@@ -15,8 +15,8 @@ import { Nav, Navbar } from 'react-bootstrap';
  */
 export function Navigation() {
   /**
-   * Vérification de l'authentification.
-   * @type {[boolean, function]} Tuple contenant l'état d'authentification et la fonction pour le mettre à jour.
+   * Vérification (Tuple) de l'état d'authentification et de la fonction pour le mettre à jour.
+   * @type {Array<boolean|function>}
    */
   const [isAuth, setIsAuth] = useState(false);
   

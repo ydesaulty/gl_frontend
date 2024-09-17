@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/HomePage.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/HomePage.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Composant HomePage pour l'affichage des graphiques de synthèse des ventes.
+ * @requires react
+ * @requires react-router-dom
+ * @requires axios
+ * @requires recharts
+ * @requires ../components/Navbar
+ */
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Navbar from '../components/Navbar';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+
+/**
+ * Composant HomePage pour l'affichage des graphiques de synthèse des ventes.
+ * 
+ * @component
+ * @returns {React.Element} Un élément React contenant les graphiques d'analyse des ventes.
+ */
+const HomePage = () => {
+  const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [monthlyCA, setMonthlyCA] = useState([]);
+  const [monthlyCAByCSP, setMonthlyCAByCSP] = useState([]);
+  const [monthlyCAByCategory, setMonthlyCAByCategory] = useState([]);
+  const [monthlyAverageBasket, setMonthlyAverageBasket] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  /**
+   * Options de graphique pour le filtrage des CSP.
+   * @type {Array&lt;{value: string, label: string}>}
+   */
+  const cspOptions = [
+    { value: 'Employes', label: 'Employes' },
+    { value: 'Commercants', label: 'Commercants' },
+    { value: 'Etudiants', label: 'Etudiants' },
+    { value: 'Agriculteurs', label: 'Agriculteurs' },
+    { value: 'Retraites', label: 'Retraites' },
+    { value: 'Autres', label: 'Autres' },
+  ];
+
+  /**
+   * Vérification de l'authentification.
+   */
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      try {
+        await axios.get('https://gl-yrae-backend-24c518b70d2a.herokuapp.com/home/');
+      } catch (error) {
+        navigate('/login');
+      }
+    };
+
+    checkAuthentication();
+  }, [navigate]);
+
+  /**
+   * Récupération des données depuis l'API.
+   */
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('https://gl-yrae-backend-24c518b70d2a.herokuapp.com/combinedviewsets');
+        setData(response.data);
+        filterDataByYear(response.data, year);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /**
+   * Effet pour filtrer les données lorsque l'année change.
+   */
+  useEffect(() => {
+    filterDataByYear(data, year);
+  }, [year, data]);
+
+  /**
+   * Calcul des indicateurs agrégés mensuels de l'année filtrée.
+   * 
+   * @param {Array} data - Les données brutes.
+   * @param {number} year - L'année à filtrer.
+   */
+  const filterDataByYear = (data, year) => {
+    const caByMonth = Array(12).fill(0);
+    const caByCSP = Array(12).fill(null).map(() => ({
+      Employes: 0,
+      Commercants: 0,
+      Etudiants: 0,
+      Agriculteurs: 0,
+      Retraites: 0,
+      Autres: 0,
+      montant_total: 0,
+      qte_total: 0,
+    }));
+    const caByCategory = Array(12).fill(null).map(() => ({
+      'Cat 1': 0,
+      'Cat 2': 0,
+      'Cat 3': 0,
+      'Cat 4': 0,
+      'Cat 5': 0,
+      montant_total: 0,
+      qte_total: 0,
+    }));
+    const averageBasket = Array(12).fill(null).map(() => ({
+      total: 0,
+      count: 0,
+      average: 0,
+    }));
+
+  // Calcul des indicateurs par mois
+    data.forEach(item => {
+      const date = new Date(item.date_collecte);
+      if (date.getFullYear() === year) {
+        const month = date.getMonth();
+        const montantAchat = parseFloat(item.montant_achat);
+        const cspLbl = item.csp_lbl;
+        const catAchat = `Cat ${item.cat_achat}`;
+        const qteArticle = parseInt(item.qte_article, 10);
+
+        // CA par mois
+        caByMonth[month] += montantAchat;
+
+        // CA par CSP
+        if (cspLbl &amp;&amp; caByCSP[month][cspLbl] !== undefined) {
+          caByCSP[month][cspLbl] += montantAchat;
+        }
+        caByCSP[month].montant_total += montantAchat;
+        caByCSP[month].qte_total += qteArticle;
+
+        // CA par catégorie
+        if (caByCategory[month][catAchat] !== undefined) {
+          caByCategory[month][catAchat] += montantAchat;
+        }
+        caByCategory[month].montant_total += montantAchat;
+        caByCategory[month].qte_total += qteArticle;
+
+        // Panier moyen
+        averageBasket[month].total += montantAchat;
+        averageBasket[month].count += qteArticle;
+        averageBasket[month].average = averageBasket[month].count ? averageBasket[month].total / averageBasket[month].count : 0;
+      }
+    });
+
+    // Mise à jour des données des indicateurs
+    setMonthlyCA(caByMonth.map((value, index) => ({ month: index + 1, montant_total: value })));
+    setMonthlyCAByCSP(caByCSP.map((csp, index) => ({ month: index + 1, ...csp })));
+    setMonthlyCAByCategory(caByCategory.map((category, index) => ({ month: index + 1, ...category })));
+    setMonthlyAverageBasket(averageBasket.map((basket, index) => ({ month: index + 1, average: basket.average })));
+  };
+
+  /**
+   * Gestion du changement d'année sélectionnée.
+   * 
+   * @param {Event} event - L'événement de changement.
+   */
+  const handleYearChange = (event) => {
+    setYear(parseInt(event.target.value));
+  };
+
+  if (loading) {
+    return &lt;div>Chargement...&lt;/div>;
+  }
+
+  if (error) {
+    return &lt;div>Erreur : {error}&lt;/div>;
+  }
+
+// Affichage des graphiques
+  return (
+    &lt;div>
+      &lt;Navbar />
+      &lt;label>
+        Période:
+        &lt;input type="number" value={year} onChange={handleYearChange} />
+      &lt;/label>
+
+      &lt;div>
+        &lt;h2>Chiffre d'Affaires par Mois&lt;/h2>
+        &lt;BarChart
+          width={800}
+          height={400}
+          data={monthlyCA}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          &lt;CartesianGrid strokeDasharray="3 3" />
+          &lt;XAxis dataKey="month" />
+          &lt;YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
+          &lt;Tooltip />
+          &lt;Legend />
+          &lt;Bar dataKey="montant_total" fill="#82ca9d" name="Montant Total" yAxisId="left" />
+        &lt;/BarChart>
+      &lt;/div>
+
+      &lt;div>
+        &lt;h2>Chiffre d'Affaires par CSP&lt;/h2>
+        &lt;BarChart
+          width={800}
+          height={400}
+          data={monthlyCAByCSP}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          &lt;CartesianGrid strokeDasharray="3 3" />
+          &lt;XAxis dataKey="month" />
+          &lt;YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
+          &lt;YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+          &lt;Tooltip />
+          &lt;Legend />
+          {cspOptions.map((csp, index) => (
+            &lt;Bar
+              key={index}
+              dataKey={csp.value}
+              stackId="a"
+              fill={`hsl(${index * 360 / cspOptions.length}, 70%, 50%)`}
+              name={csp.label}
+              yAxisId="left"
+            />
+          ))}
+          &lt;Bar dataKey="qte_total" stackId="b" fill="#82ca9d" name="Quantité Totale" yAxisId="right" />
+        &lt;/BarChart>
+      &lt;/div>
+
+      &lt;div>
+        &lt;h2>Chiffre d'Affaires par Catégorie&lt;/h2>
+        &lt;BarChart
+          width={800}
+          height={400}
+          data={monthlyCAByCategory}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          &lt;CartesianGrid strokeDasharray="3 3" />
+          &lt;XAxis dataKey="month" />
+          &lt;YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
+          &lt;YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+          &lt;Tooltip />
+          &lt;Legend />
+          &lt;Bar dataKey="Cat 1" stackId="a" fill="#8884d8" name="Cat 1" yAxisId="left" />
+          &lt;Bar dataKey="Cat 2" stackId="a" fill="#82ca9d" name="Cat 2" yAxisId="left" />
+          &lt;Bar dataKey="Cat 3" stackId="a" fill="#ffc658" name="Cat 3" yAxisId="left" />
+          &lt;Bar dataKey="Cat 4" stackId="a" fill="#ff8042" name="Cat 4" yAxisId="left" />
+          &lt;Bar dataKey="Cat 5" stackId="a" fill="#808080" name="Cat 5" yAxisId="left" />
+          &lt;Bar dataKey="qte_total" stackId="b" fill="#82ca9d" name="Quantité Totale" yAxisId="right" />
+        &lt;/BarChart>
+      &lt;/div>
+
+      &lt;div>
+        &lt;h2>Panier Moyen par Mois&lt;/h2>
+        &lt;BarChart
+          width={800}
+          height={400}
+          data={monthlyAverageBasket}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          &lt;CartesianGrid strokeDasharray="3 3" />
+          &lt;XAxis dataKey="month" />
+          &lt;YAxis />
+          &lt;Tooltip />
+          &lt;Legend />
+          &lt;Bar dataKey="average" fill="#82ca9d" name="Panier Moyen" />
+        &lt;/BarChart>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default HomePage;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AverageBasket">AverageBasket</a></li><li><a href="global.html#BarChartHomePage">BarChartHomePage</a></li><li><a href="global.html#CSPByCategory">CSPByCategory</a></li><li><a href="global.html#CategoryByCSP">CategoryByCSP</a></li><li><a href="global.html#Chart">Chart</a></li><li><a href="global.html#ComparisonCharts">ComparisonCharts</a></li><li><a href="global.html#FilterForm">FilterForm</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#HomePage">HomePage</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Logout">Logout</a></li><li><a href="global.html#NavButton">NavButton</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#NavbarContainer">NavbarContainer</a></li><li><a href="global.html#Navigation">Navigation</a></li><li><a href="global.html#exportToExcel">exportToExcel</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Tue Sep 17 2024 13:00:09 GMT+0200 (heure d’été d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
