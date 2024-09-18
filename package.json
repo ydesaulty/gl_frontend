@@ -26,6 +26,7 @@
     "start": "node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build",
     "docs": "jsdoc -c jsdoc.config.json"
