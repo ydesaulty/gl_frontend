@@ -43,6 +43,7 @@ const CategoryByCSP = () => {
    * Options de graphique pour le filtrage des CSP.
    * @type {Array<{value: string, label: string}>}
    */
+  // 
   const cspOptions = [
     { value: 'Employes', label: 'Employes' },
     { value: 'Commercants', label: 'Commercants' },
@@ -170,22 +171,30 @@ const CategoryByCSP = () => {
 
     if (start_date) {
       setStartDate(start_date);
-      filtered = filtered.filter(item => new Date(item.date_collecte) >= new Date(start_date));
+      const startDateTime = new Date(start_date);
+      startDateTime.setHours(0, 0, 0, 0);
+      filtered = filtered.filter(item => new Date(item.date_collecte) >= startDateTime);
     }
 
     if (end_date) {
       setEndDate(end_date);
-      filtered = filtered.filter(item => new Date(item.date_collecte) <= new Date(end_date));
+      const endDateTime = new Date(end_date);
+      endDateTime.setHours(23, 59, 59, 999);
+      filtered = filtered.filter(item => new Date(item.date_collecte) <= endDateTime);
     }
 
     if (start_date_compare) {
       setStartDateCompare(start_date_compare);
-      filteredCompare = filteredCompare.filter(item => new Date(item.date_collecte) >= new Date(start_date_compare));
+      const startDateTimeCompare = new Date(start_date_compare);
+      startDateTimeCompare.setHours(0, 0, 0, 0);
+      filteredCompare = filteredCompare.filter(item => new Date(item.date_collecte) >= startDateTimeCompare);
     }
 
     if (end_date_compare) {
       setEndDateCompare(end_date_compare);
-      filteredCompare = filteredCompare.filter(item => new Date(item.date_collecte) <= new Date(end_date_compare));
+      const endDateTimeCompare = new Date(end_date_compare);
+      endDateTimeCompare.setHours(23, 59, 59, 999);
+      filteredCompare = filteredCompare.filter(item => new Date(item.date_collecte) <= endDateTimeCompare);
     }
 
     setFilteredData(filtered);
