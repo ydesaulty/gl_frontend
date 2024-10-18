@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import CSPByCategory from './pages/CSPByCategory';
 import CategoryByCSP from './pages/CategoryByCSP';
 import AverageBasket from './pages/AverageBasket';
+import Peaktimes from './pages/Peaktimes';
 import Documentation from './pages/Documentation';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/csp-by-category" element={<CSPByCategory />} />
         <Route path="/category-by-csp" element={<CategoryByCSP />} />
         <Route path="/average-basket" element={<AverageBasket />} />
+        <Route path="/peaktimes" element={<Peaktimes />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/documentation" element={<Documentation />} />
       </Routes>
